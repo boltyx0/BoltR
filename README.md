@@ -1,7 +1,7 @@
 # BoltR — Advanced Offensive Reconnaissance
 
 <p align="center">
-<img src=".github/images/banner-rengine-ng.png" alt="BoltR" />
+<img src=".github/images/banner-boltr.jpg" alt="BoltR" />
 </p>
 
 <p align="center">
