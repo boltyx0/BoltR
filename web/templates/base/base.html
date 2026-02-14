@@ -1,0 +1,314 @@
+{% load permission_tags %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{% block title %} {% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="shortcut icon" href="/staticfiles/img/favicon.png">
+    <link href="{% static 'bootstrap/bootstrap.min.css' %}" rel="stylesheet" type="text/css" id="bootstrap-stylesheet" />
+    <link href="{% static 'assets/css/app.min.css' %}" rel="stylesheet" type="text/css" id="main-stylesheet" />
+    <link href="{% static 'bootstrap/bootstrap-dark.min.css' %}" rel="stylesheet" type="text/css" id="bootstrap-dark-stylesheet" />
+    <link href="{% static 'assets/css/app-dark.min.css' %}" rel="stylesheet" type="text/css" id="main-dark-stylesheet" />
+    <link href="{% static 'assets/css/icons.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'plugins/snackbar/snackbar.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'plugins/sweetalert2/sweetalert2.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'plugins/switches/switches.min.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'custom/custom.css' %}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'plugins/datatable/global.css' %}">
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'plugins/datatable/custom.css' %}"> -->
+    <link href="https://cdn.datatables.net/rowgroup/1.4.0/css/rowGroup.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <style media="screen">
+      @font-face {
+        font-family: "Cerebri Sans,sans-serif";
+        src: url("{% static 'fonts/cerebrisans-light.eot' %}");
+        src: local("Cerebri-sans Light"), url("{% static 'fonts/cerebrisans-light.woff' %}") format("woff");
+        font-weight: 300; }
+
+      @font-face {
+        font-family: "Cerebri Sans,sans-serif";
+        src: url("{% static 'fonts/cerebrisans-regular.eot' %}");
+        src: local("Cerebri-sans Regular"), url("{% static 'fonts/cerebrisans-regular.woff' %}") format("woff");
+        font-weight: 400; }
+
+      @font-face {
+        font-family: "Cerebri Sans,sans-serif";
+        src: url("{% static 'fonts/cerebrisans-medium.eot' %}");
+        src: local("Cerebri-sans Medium"), url("{% static 'fonts/cerebrisans-medium.woff' %}") format("woff");
+        font-weight: 500; }
+
+      @font-face {
+        font-family: "Cerebri Sans,sans-serif";
+        src: url("{% static 'fonts/cerebrisans-semibold.eot' %}");
+        src: local("Cerebri-sans Semibold"), url("{% static 'fonts/cerebrisans-semibold.woff' %}") format("woff");
+        font-weight: 600; }
+
+      @font-face {
+        font-family: "Cerebri Sans,sans-serif";
+        src: url("{% static 'fonts/cerebrisans-bold.eot' %}");
+        src: local("Cerebri-sans Bold"), url("{% static 'fonts/cerebrisans-bold.woff' %}") format("woff");
+        font-weight: 700; }
+    </style>
+    <!-- Modern font stack for UI + mono numbers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- load any page wise jquery or stylesheet -->
+    {% block custom_js_css_link %}
+    {% endblock custom_js_css_link %}
+    <!-- Onyx / Deep Carbon design overrides (MUST load last to override theme) -->
+    <link href="{% static 'custom/design_override.css' %}?v=3" rel="stylesheet" type="text/css" />
+    <style id="boltr-design-critical">
+      /* Critical overrides inlined so they always apply (avoids cache/load issues) */
+      :root{--body-bg:#0a0a0a;--sidebar-bg:#050505;--card-bg:#141414;--card-border:#262626;--text-primary:#fff;--accent-primary:#3B82F6;}
+      body{background-color:var(--body-bg)!important;color:var(--text-primary)!important;font-family:Inter,system-ui,sans-serif;}
+      body .content-page{background-color:transparent!important;}
+      body[data-layout-mode=horizontal] .content-page{margin-top:125px!important;}
+      .navbar-custom{background-color:var(--sidebar-bg)!important;border-bottom:1px solid #111;min-height:125px!important;}
+      .boltr-second-nav{display:flex!important;align-items:center;min-height:55px;background:#1f1f1f!important;border-top:1px solid #111;visibility:visible!important;}
+      .boltr-nav-links{display:flex!important;flex-wrap:nowrap;align-items:center;gap:2px;list-style:none;margin:0;padding:4px 0;}
+      .boltr-nav-links li{display:inline-flex;}
+      .boltr-nav-links a{display:inline-flex;align-items:center;padding:6px 16px;border-radius:999px;color:#a1a1a1;text-decoration:none;font-size:.9rem;}
+      .boltr-nav-links a:hover,.boltr-nav-links .dropdown.show>a{background:var(--accent-primary);color:var(--text-primary)!important;}
+      .card{background-color:var(--card-bg)!important;border-radius:16px!important;border:1px solid var(--card-border)!important;box-shadow:none!important;}
+    </style>
+  </head>
+
+  <body class="loading" data-layout-mode="horizontal">
+    <!-- Topbar begins -->
+    {% include 'base/_items/top_bar.html' %}
+    <div id="wrapper"></div>
+    <div class="content-page">
+        <div class="content">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-12">
+                <div class="page-title-box">
+                  <div class="page-title-right">
+                    <ol class="breadcrumb m-0">
+                      {% block breadcrumb_title %}
+                      {% endblock breadcrumb_title %}
+                    </ol>
+                  </div>
+                  <h4 class="page-title">{% block page_title %}{% endblock page_title %}</h4>
+                </div>
+              </div>
+            </div>
+            {% block main_content %}
+            {% endblock main_content %}
+          </div>
+          <div id="additional-content"></div>
+        </div>
+        {% include 'base/_items/modal.html' %}
+        {% include 'base/_items/xl_scrollable_modal.html' %}
+        {% include 'base/_items/offcanvas.html' %}
+      </div>
+      {% include 'base/_items/right_bar.html' %}
+      {% include 'base/_items/footer.html' %}
+    </div>
+    <script src="{% static 'assets/js/vendor.min.js' %}"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.8/purify.min.js"></script>
+    <script src="{% static 'assets/js/app.min.js' %}"></script>
+    <script src="{% static 'custom/custom.js' %}"></script>
+    <script src="{% static 'custom/toolbox.js' %}"></script>
+    <script src="{% static 'custom/right_sidebar.js' %}"></script>
+    <script src="{% static 'custom/port_display.js' %}"></script>
+    <script src="{% static 'plugins/snackbar/snackbar.min.js' %}"></script>
+    <script src="{% static 'plugins/sweetalert2/sweetalert2.all.min.js' %}"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/rowgroup/1.4.0/js/dataTables.rowGroup.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        // for tabs with urls, we need to append the hash in the url
+        $('a[data-bs-toggle="tab"]').on('shown.bs.tab', function (e) {
+          var href = $(e.target).attr('href');
+          if (href && href.startsWith('#')) {
+            history.pushState(null, null, href);
+          }
+        });
+        $(window).on('hashchange', handleHashInUrl);
+        render_search_history('{{current_project.slug}}');
+
+        // BoltR will also check everyday if update exists for BoltR
+        checkForUpdates(false);
+
+        getScanStatusSidebar('{% url 'api:scan_status' %}', '{% url 'api:stop_scan' %}', '{% url 'api:fetch_subscan_results' %}', project='{{current_project.slug}}', reload=false);
+        // BoltR: always use dark theme (toggle removed)
+        localStorage.setItem('rengine-theme', 'dark');
+        if ($.LayoutThemeApp && $.LayoutThemeApp.changeMode) {
+          $.LayoutThemeApp.changeMode('dark', true);
+          if ($.RightBar && $.RightBar.selectOptionsFromConfig) $.RightBar.selectOptionsFromConfig();
+        }
+        handleHashInUrl();
+      });
+
+      function render_search_history(slug){
+        fetch('/api/search/history/')
+        .then(response => response.json())
+        .then(function (response) {
+          if (response.status) {
+            for (var history in response.results) {
+              $('#search-history-items').append(`
+                <a href="{% url 'search' %}?query=${response.results[history].query}" class="dropdown-item notify-item">
+                  <span>${response.results[history].query}</span>
+                </a>
+              `);
+            }
+          }
+          else{
+            $('#search-history-items').append(`
+              <span class="ms-2">No recent searches.</span>
+            `);
+          }
+        });
+      }
+
+      // main function to check for updates
+      function checkForUpdates(showUI = false) {
+        const updateAvailable = window.localStorage.getItem('update_available') === 'true';
+        
+        // Hide the default badge
+        $('.rengine_update_available').hide();
+        
+        if (updateAvailable) {
+          // if an update was marked as available, check if it's still the case
+          checkUpdateFromAPI(showUI);
+        } else if (hasOneDayPassed()) {
+          // no update known, check once per day
+          checkUpdateFromAPI(showUI);
+        } else if (showUI) {
+          // if we force the check via the menu
+          checkUpdateFromAPI(true);
+        }
+      }
+
+      function checkUpdateFromAPI(showLoadingScreen) {
+        if (showLoadingScreen) {
+          Swal.fire({
+            title: 'Checking BoltR latest version...',
+            allowOutsideClick: false
+          });
+          swal.showLoading();
+        }
+        
+        fetch('/api/rengine/update/')
+          .then(response => response.json())
+          .then(function (response) {
+            if (showLoadingScreen) {
+              swal.close();
+            }
+            
+            if (response['description'] == 'RateLimited') {
+              if (showLoadingScreen) {
+                Swal.fire({
+                  title: 'Oops!',
+                  text: 'Github rate limit exceeded, please try again in an hour!',
+                  icon: 'error'
+                });
+              }
+              window.localStorage.setItem('update_available', false);
+              $('.rengine_update_available').hide();
+            }
+            else if (response['update_available']) {
+              window.localStorage.setItem('update_available', true);
+              window.localStorage.setItem('latest_version', response['latest_version']);
+              window.localStorage.setItem('changelog', response['changelog']);
+              $('.rengine_update_available').show();
+              if (showLoadingScreen) {
+                showUpdateAvailable(response['latest_version'], response['changelog']);
+              }
+            }
+            else {
+              if (showLoadingScreen) {
+                Swal.fire({
+                  title: 'Update not available',
+                  text: 'You are running the latest version of BoltR!',
+                  icon: 'info'
+                });
+              }
+              window.localStorage.setItem('update_available', false);
+              window.localStorage.removeItem('latest_version');
+              window.localStorage.removeItem('changelog');
+              $('.rengine_update_available').hide();
+            }
+          });
+      }
+
+      function showUpdateAvailable(latest_version_number, changelog) {
+        Swal.fire({
+          title: 'Update Available!',
+          html: `<h5>BoltR's new update ${latest_version_number} is available, please follow the update instructions.</h5><pre>${changelog}</pre>`,
+          icon: 'info',
+          confirmButtonText: 'Update Instructions',
+          showCancelButton: true,
+          cancelButtonText: 'Dismiss',
+          width: '60%',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.open("https://github.com/Security-Tools-Alliance/rengine-ng/wiki/Installation#-updating-rengine-ng","_blank")
+          }
+        });
+      }
+
+      function hasOneDayPassed() {
+        const date = new Date().toLocaleDateString();
+        const lastChecked = window.localStorage.getItem('last_update_checked');
+        
+        if (lastChecked === date) {
+          return false;
+        }
+        
+        window.localStorage.setItem('last_update_checked', date);
+        return true;
+      }
+
+      // tippy for notification or scan activity
+      tippy('.top-activity-counter', {
+        content: 'Scan Activity',
+      });
+    </script>
+    {% if messages %}
+      {% for message in messages %}
+        <script type="text/javascript">
+          Snackbar.show({
+            text: '{{ message }}',
+            pos: 'top-right',
+            {% if message.tags == 'error'%}
+              actionTextColor: '#fff',
+              backgroundColor: '#e7515a',
+            {% else %}
+            actionTextColor: '#42A5F5',
+            {% endif %}
+            duration: 2500
+          });
+        </script>
+      {% endfor %}
+    {% endif %}
+    {% block page_level_script %}
+    {% endblock page_level_script%}
+    <!-- #region agent log -->
+    <script>
+window.addEventListener('load',function(){
+var el=document.querySelector('link[href*="design_override"]');
+var linkPresent=!!el;
+var linkHref=el?el.href:'';
+var bodyBg='';
+var cardRadius='';
+var darkSheetDisabled=null;
+try{ bodyBg=document.body?getComputedStyle(document.body).backgroundColor:''; }catch(e){}
+var card=document.querySelector('.card');
+if(card){ try{ cardRadius=getComputedStyle(card).borderRadius; }catch(e){} }
+var darkLink=document.getElementById('main-dark-stylesheet');
+if(darkLink){ darkSheetDisabled=darkLink.getAttribute('disabled'); }
+fetch('http://127.0.0.1:7242/ingest/88dfb394-5668-4c40-86ed-91f5ae5611c9',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'base.html:design-check',message:'CSS override diagnostic',data:{linkPresent:linkPresent,linkHref:linkHref,bodyBg:bodyBg,cardRadius:cardRadius,darkSheetDisabled:darkSheetDisabled},timestamp:Date.now(),hypothesisId:'A'})}).catch(function(){});
+});
+    </script>
+    <!-- #endregion agent log -->
+  </body>
+</html>
