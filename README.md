@@ -12,8 +12,6 @@
 
 This repository is a customized fork of [reNgine-ng](https://github.com/Security-Tools-Alliance/rengine-ng) (Next Generation), with branding, UI, and feature customizations suited for internal or team use.
 
-**BoltR fork by [boltyx0](https://github.com/boltyx0).**
-
 ---
 
 ## Table of Contents
