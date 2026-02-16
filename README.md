@@ -12,20 +12,6 @@
 
 ---
 
-## Table of Contents
-
-- [Features](#features)
-- [Requirements](#requirements)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-- [Configuration](#configuration)
-- [Scripts](#scripts)
-- [Customizations in This Fork](#customizations-in-this-fork)
-- [Troubleshooting](#troubleshooting)
-- [Documentation & Contributing](#documentation--contributing)
-- [License](#license)
-
----
 
 ## Features
 
